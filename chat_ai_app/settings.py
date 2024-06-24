@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    'webpack_boilerplate', # new
+    'webpack_boilerplate',
+    'chat_ai_app.chat',
 ]
 
 MIDDLEWARE = [
