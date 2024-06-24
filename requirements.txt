@@ -1,0 +1,2 @@
+django==4.2.6
+python-webpack-boilerplate==1.0.1  # new
