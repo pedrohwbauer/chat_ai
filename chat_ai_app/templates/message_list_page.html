@@ -2,52 +2,59 @@
 
 {% block content %}
 
-<main class="w-full">
-  <div class="grid grid-cols-12 gap-2">
-    <div class="col-span-12 bg-gray-50 sm:col-span-3">
-      <div class="flex flex-col space-y-1 sm:h-screen">
+  <main class="w-full">
+    <div class="grid grid-cols-12 gap-2">
+      <div class="col-span-12 bg-gray-50 sm:col-span-3">
+        <div class="flex flex-col space-y-1 sm:h-screen">
 
-        <form method="post" action="{% url 'chat:index' %}">
-          {% csrf_token %}
-          <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded m-2">Start a new conversation</button>
-        </form>
+          <form method="post" action="{% url 'chat:index' %}">
+            {% csrf_token %}
+            <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded m-2">Start a new conversation
+            </button>
+          </form>
 
-        <ul class="flex flex-col py-4 space-y-2">
-          {% for chat in chats %}
-          <a class="text-white py-2 px-2 rounded mx-2 bg-blue-500"
-             href="{% url 'chat:message-list' chat.pk %}">Chat: created on <time>{{ chat.created_at }}</time></a>
-          {% endfor %}
-        </ul>
-
-      </div>
-    </div>
-    <div class="col-span-12 bg-gray-50 sm:col-span-9">
-      <div class="bg-gray-50 sm:h-screen">
-
-        <div class="flex flex-col h-full">
-
-          <!-- Message List -->
-          <div class="overflow-y-auto flex-1">
-            {% for instance in object_list %}
-            <div id="message_{{ instance.pk }}">
-              {% if instance.role_label == 'User' %}
-              <div class="p-4 m-4 max-w-full text-black rounded-lg bg-sky-100 prose" >{{ instance.content }}</div>
-              {% else %}
-              <div class="p-4 m-4 max-w-full bg-gray-200 rounded-lg prose">{{ instance.content }}</div>
-              {% endif %}
-            </div>
+          <ul class="flex flex-col py-4 space-y-2">
+            {% for chat in chats %}
+              <a class="text-white py-2 px-2 rounded mx-2 bg-blue-500"
+                 href="{% url 'chat:message-list' chat.pk %}">Chat: created on <time>{{ chat.created_at }}</time></a>
             {% endfor %}
-          </div>
+          </ul>
 
-          <!-- Message Form -->
-          <div>
+        </div>
+      </div>
+      <div class="col-span-12 bg-gray-50 sm:col-span-9">
+        <div class="bg-gray-50 sm:h-screen">
+
+          <div class="flex flex-col h-full">
+
+            <!-- Message List -->
+            <div class="overflow-y-auto flex-1">
+              {% for instance in object_list %}
+                <div id="message_{{ instance.pk }}">
+                  {% if instance.role_label == 'User' %}
+                    <div class="p-4 m-4 max-w-full text-black rounded-lg bg-sky-100 prose" >{{ instance.content }}</div>
+                  {% else %}
+                    <div class="p-4 m-4 max-w-full bg-gray-200 rounded-lg prose">{{ instance.content }}</div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+
+            <!-- Message Form -->
+            <div>
+              <turbo-frame
+                  id="message-create-frame"
+                  src="{% url 'chat:message-create' view.kwargs.chat_pk %}"
+                  data-turbo="true"
+              >
+                Loading...
+              </turbo-frame>
+            </div>
           </div>
 
         </div>
-
       </div>
     </div>
-  </div>
-</main>
+  </main>
 
 {% endblock %}

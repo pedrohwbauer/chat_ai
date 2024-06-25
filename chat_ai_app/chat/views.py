@@ -1,9 +1,11 @@
 from django.urls import reverse
 from django.views import View
 from django.views.generic.list import ListView
+from django.views.generic.edit import CreateView
 from django.http import HttpResponseRedirect
 
 from .models import Chat, Message
+from .forms import MessageForm
 
 
 class IndexView(View):
@@ -40,3 +42,39 @@ class MessageListView(ListView):
 
 
 message_list_view = MessageListView.as_view()
+
+
+class MessageCreateView(CreateView):
+    model = Message
+    template_name = "message_create.html"
+    form_class = MessageForm
+
+    def get_success_url(self):
+        return None
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["chat_pk"] = self.kwargs.get("chat_pk")
+        kwargs["role"] = Message.USER
+        return kwargs
+
+    def get_empty_form(self):
+        """
+        Return empty form so we can reset the form
+        """
+        form_class = self.get_form_class()
+        kwargs = self.get_form_kwargs()
+        kwargs.pop("data")
+        kwargs.pop("files")
+        kwargs.pop("instance")
+        return form_class(**kwargs)
+
+    def form_valid(self, form):
+        super().form_valid(form)
+
+        # reset the form
+        new_form = self.get_empty_form()
+        return self.render_to_response(self.get_context_data(form=new_form))
+
+
+message_create_view = MessageCreateView.as_view()

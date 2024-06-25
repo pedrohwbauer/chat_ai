@@ -1,9 +1,20 @@
 from django import forms
+from django.core.validators import MinLengthValidator
 
 from .models import Chat, Message
 
 
 class MessageForm(forms.ModelForm):
+    content = forms.CharField(
+        label='Content',
+        widget=forms.Textarea(
+            attrs={
+                'class': "rounded-lg border-gray-300 block leading-normal border px-4 text-gray-700 bg-white "
+                         "focus:outline-none py-2 appearance-none w-full",
+            },
+        ),
+        validators=[MinLengthValidator(2)]
+    )
 
     class Meta:
         model = Message
