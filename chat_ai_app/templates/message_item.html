@@ -1,0 +1,7 @@
+<div id="message_{{ instance.pk }}">
+    {% if instance.role_label == 'User' %}
+    <div class="p-4 m-4 max-w-full text-black rounded-lg bg-sky-100 prose" >{{ instance.content }}</div>
+    {% else %}
+    <div class="p-4 m-4 max-w-full bg-gray-200 rounded-lg prose">{{ instance.content }}</div>
+    {% endif %}
+  </div>

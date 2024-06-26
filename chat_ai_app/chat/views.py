@@ -7,6 +7,36 @@ from django.http import HttpResponseRedirect
 from .models import Chat, Message
 from .forms import MessageForm
 
+from turbo_response import TurboStream, TurboStreamResponse
+
+import openai
+openai.api_key = '****************'
+
+
+def get_ai_response(message_pk):
+    chat_instance = Message.objects.get(pk=message_pk).chat
+    message_instance = Message.objects.create(
+        role=Message.ASSISTANT,
+        content="",
+        chat=chat_instance,
+    )
+    messages = Message.for_openai(chat_instance.messages.all())
+
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=messages,
+            temperature=0,
+        )
+        message_instance.content = response['choices'][0]['message']['content']
+        message_instance.save(update_fields=["content"])
+    except Exception as e:
+        message_instance.content = str(e)
+        message_instance.save(update_fields=["content"])
+
+    # return AI message
+    return message_instance
+
 
 class IndexView(View):
 
@@ -71,10 +101,41 @@ class MessageCreateView(CreateView):
 
     def form_valid(self, form):
         super().form_valid(form)
+        request = self.request
 
-        # reset the form
-        new_form = self.get_empty_form()
-        return self.render_to_response(self.get_context_data(form=new_form))
+        ai_message = get_ai_response(self.object.pk)
+
+        # return Turbo Stream to do partial updates on the page
+        return TurboStreamResponse(
+            [
+                TurboStream("message-create-frame")
+                    .replace.template(
+                    self.template_name,
+                    {
+                        "form": self.get_empty_form(),
+                        "request": request,
+                        "view": self,
+                    },
+                ).response(request).rendered_content,
+                # user message
+                TurboStream(f"chat-{self.kwargs['chat_pk']}-message-list")
+                    .append.template(
+                    "message_item.html",
+                    {
+                        "instance": self.object,
+                    },
+                ).response(request).rendered_content,
+                # AI message
+                TurboStream(f"chat-{self.kwargs['chat_pk']}-message-list")
+                    .append.template(
+                    "message_item.html",
+                    {
+                        "instance": ai_message,
+                    },
+                ).response(request).rendered_content,
+            ]
+        )
+
 
 
 message_create_view = MessageCreateView.as_view()

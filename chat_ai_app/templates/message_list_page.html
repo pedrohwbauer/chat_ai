@@ -29,15 +29,7 @@
 
             <!-- Message List -->
             <div class="overflow-y-auto flex-1">
-              {% for instance in object_list %}
-                <div id="message_{{ instance.pk }}">
-                  {% if instance.role_label == 'User' %}
-                    <div class="p-4 m-4 max-w-full text-black rounded-lg bg-sky-100 prose" >{{ instance.content }}</div>
-                  {% else %}
-                    <div class="p-4 m-4 max-w-full bg-gray-200 rounded-lg prose">{{ instance.content }}</div>
-                  {% endif %}
-                </div>
-              {% endfor %}
+              {% include 'message_list.html' with chat_pk=view.kwargs.chat_pk %}
             </div>
 
             <!-- Message Form -->

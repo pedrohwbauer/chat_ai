@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'webpack_boilerplate',
+    'turbo_response',
     'chat_ai_app.chat',
 ]
 
@@ -50,6 +51,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    'turbo_response.middleware.TurboMiddleware',
 ]
 
 ROOT_URLCONF = 'chat_ai_app.urls'
