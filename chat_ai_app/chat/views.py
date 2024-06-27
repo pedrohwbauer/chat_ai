@@ -9,8 +9,10 @@ from .forms import MessageForm
 
 from turbo_response import TurboStream, TurboStreamResponse
 
-import openai
-openai.api_key = '****************'
+from openai import OpenAI
+client = OpenAI(
+  api_key='***',
+)
 
 
 def get_ai_response(message_pk):
@@ -23,12 +25,12 @@ def get_ai_response(message_pk):
     messages = Message.for_openai(chat_instance.messages.all())
 
     try:
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=messages,
             temperature=0,
         )
-        message_instance.content = response['choices'][0]['message']['content']
+        message_instance.content = response.choices[0].message.content
         message_instance.save(update_fields=["content"])
     except Exception as e:
         message_instance.content = str(e)
