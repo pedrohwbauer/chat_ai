@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from django.urls import reverse
 from django.views import View
 from django.views.generic.list import ListView
@@ -11,7 +13,7 @@ from turbo_response import TurboStream, TurboStreamResponse
 
 from openai import OpenAI
 client = OpenAI(
-  api_key='***',
+  api_key=settings.OPENAI_KEY,
 )
 
 

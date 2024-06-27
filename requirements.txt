@@ -1,3 +1,4 @@
+python-dotenv
 django==4.2.6
 python-webpack-boilerplate==1.0.1
 django-turbo-response==1.0.3
