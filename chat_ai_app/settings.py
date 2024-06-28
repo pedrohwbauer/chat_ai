@@ -39,6 +39,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -48,6 +50,8 @@ INSTALLED_APPS = [
     
     'webpack_boilerplate',
     'turbo_response',
+    'channels',
+    
     'chat_ai_app.chat',
 ]
 
@@ -81,7 +85,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'chat_ai_app.wsgi.application'
+# WSGI_APPLICATION = 'chat_ai_app.wsgi.application'
+ASGI_APPLICATION = 'chat_ai_app.asgi.application'
 
 
 # Database
@@ -142,4 +147,13 @@ STATICFILES_DIRS = [
 
 WEBPACK_LOADER = {
     'MANIFEST_FILE': str(BASE_DIR / "frontend/build/manifest.json"),
+}
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": ["redis://127.0.0.1:6379/0"],
+        },
+    },
 }

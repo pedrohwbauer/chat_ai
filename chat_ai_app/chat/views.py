@@ -107,7 +107,40 @@ class MessageCreateView(CreateView):
         super().form_valid(form)
         request = self.request
 
+        from asgiref.sync import async_to_sync
+        from channels.layers import get_channel_layer
+
+        channel_layer = get_channel_layer()
+        group_name = f"turbo_stream.chat_{self.kwargs['chat_pk']}"
+        html = (
+            # user message
+            TurboStream(f"chat-{self.kwargs['chat_pk']}-message-list")
+                .append.template(
+                "message_item.html",
+                {
+                    "instance": self.object,
+                },
+            ).render()
+        )
+        async_to_sync(channel_layer.group_send)(
+            group_name, {"type": "html_message", "html": html}
+        )
+
         ai_message = get_ai_response(self.object.pk)
+
+        html = (
+            # AI message
+            TurboStream(f"chat-{self.kwargs['chat_pk']}-message-list")
+                .append.template(
+                "message_item.html",
+                {
+                    "instance": ai_message,
+                },
+            ).render()
+        )
+        async_to_sync(channel_layer.group_send)(
+            group_name, {"type": "html_message", "html": html}
+        )
 
         # return Turbo Stream to do partial updates on the page
         return TurboStreamResponse(
@@ -121,25 +154,8 @@ class MessageCreateView(CreateView):
                         "view": self,
                     },
                 ).response(request).rendered_content,
-                # user message
-                TurboStream(f"chat-{self.kwargs['chat_pk']}-message-list")
-                    .append.template(
-                    "message_item.html",
-                    {
-                        "instance": self.object,
-                    },
-                ).response(request).rendered_content,
-                # AI message
-                TurboStream(f"chat-{self.kwargs['chat_pk']}-message-list")
-                    .append.template(
-                    "message_item.html",
-                    {
-                        "instance": ai_message,
-                    },
-                ).response(request).rendered_content,
             ]
         )
-
 
 
 message_create_view = MessageCreateView.as_view()

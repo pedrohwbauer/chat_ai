@@ -49,4 +49,17 @@
     </div>
   </main>
 
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const url = "/ws/turbo_stream/chat_{{ view.kwargs.chat_pk }}/"
+      const source = new WebSocket(
+        (location.protocol === "https:" ? "wss" : "ws") +
+        "://" +
+        window.location.host +
+        url
+      );
+      Turbo.connectStreamSource(source);
+    });
+</script>
+
 {% endblock %}
