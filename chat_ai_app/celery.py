@@ -15,6 +15,9 @@ app = Celery("chat_ai_app")
 # config keys has `CELERY` prefix
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
+# Set the new configuration setting for Celery 6.0+
+app.conf.broker_connection_retry_on_startup = True
+
 # discover and load tasks.py from from all registered Django apps
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
