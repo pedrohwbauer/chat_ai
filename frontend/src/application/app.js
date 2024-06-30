@@ -2,12 +2,9 @@
 import "../styles/index.scss";
 
 import { Application } from "@hotwired/stimulus";
-import websocketController from "../controllers/websocket_controller";
+import { definitionsFromContext } from "@hotwired/stimulus-webpack-helpers";
 
 import "@hotwired/turbo"; 
 window.Stimulus = Application.start();
-window.Stimulus.register("websocket", websocketController);
-
-window.document.addEventListener("DOMContentLoaded", function () {
-  window.console.log("dom ready");
-});
+const context = require.context("../controllers", true, /\.js$/);
+window.Stimulus.load(definitionsFromContext(context));
