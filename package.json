@@ -59,6 +59,7 @@
     "bootstrap": "^5.1.3",
     "core-js": "^3.20.3",
     "highlight.js": "^11.9.0",
-    "marked": "^13.0.1"
+    "marked": "^13.0.1",
+    "stimulus-textarea-autogrow": "^4.1.0"
   }
 }

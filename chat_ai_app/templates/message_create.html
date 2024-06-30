@@ -1,24 +1,26 @@
 <turbo-frame id="message-create-frame" data-turbo="true">
-    <form
-        method="post"
-        action="{% url 'chat:message-create' view.kwargs.chat_pk %}"
-        class="p-2 m-2"
+  <form
+    method="post"
+    action="{% url 'chat:message-create' view.kwargs.chat_pk %}"
+    class="p-2 m-2"
+    data-controller="chat-message-form"
+    data-action="keydown.ctrl+enter->chat-message-form#autoSubmit focusin->chat-message-form#scroll"
+    data-chat-message-form-target-value="chat-{{ view.kwargs.chat_pk }}-message-list"
+  >
+    {% csrf_token %}
+
+    <div class="mb-3">
+      {{ form.content }}
+
+      <div class="text-xs italic text-red-500">{{ form.content.errors }}</div>
+    </div>
+
+    <button
+      type="submit"
+      class="transition-all bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded disabled:bg-gray-400 disabled:text-gray-500 disabled:cursor-not-allowed"
+      data-turbo-submits-with="Submitting..."
     >
-      {% csrf_token %}
-  
-      <div class="mb-3">
-        {{ form.content }}
-  
-        <div class="text-xs italic text-red-500">
-          {{ form.content.errors }}
-        </div>
-      </div>
-  
-      <button type="submit"
-              class="transition-all bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
-      >
-        Submit
-      </button>
-  
-    </form>
-  </turbo-frame>
+      Submit
+    </button>
+  </form>
+</turbo-frame>

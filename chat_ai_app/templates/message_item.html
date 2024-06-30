@@ -1,7 +1,19 @@
 <div id="message_{{ instance.pk }}">
   {% if instance.role_label == 'User' %}
-  <div class="p-4 m-4 max-w-full text-black rounded-lg bg-sky-100 prose" data-controller="markdown" data-content="{{ instance.content|escape }}"></div>
-  {% else %}
-  <div class="p-4 m-4 max-w-full bg-gray-200 rounded-lg prose" data-controller="markdown" data-content="{{ instance.content|escape }}"></div>
-  {% endif %}
+  <div class="p-4 m-4 max-w-full text-black rounded-lg bg-sky-100 prose"
+       data-controller="markdown"
+       data-content="{{ instance.content|escape }}"
+       data-markdown-target-value="chat-{{ instance.chat_id }}-message-list"
+       data-turbo-stream="{{ turbo_stream|yesno:"true,false" }}">
+
+</div>
+{% else %}
+<div class="p-4 m-4 max-w-full bg-gray-200 rounded-lg prose"
+     data-controller="markdown"
+     data-content="{{ instance.content|escape }}"
+     data-markdown-target-value="chat-{{ instance.chat_id }}-message-list"
+     data-turbo-stream="{{ turbo_stream|yesno:"true,false" }}">
+
+</div>
+{% endif %}
 </div>

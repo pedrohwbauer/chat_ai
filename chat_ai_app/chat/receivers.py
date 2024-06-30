@@ -18,6 +18,7 @@ def handle_user_message(sender, instance, created, **kwargs):
             "message_item.html",
             {
                 "instance": instance,
+                "turbo_stream": True,
             },
         ).render()
     )
