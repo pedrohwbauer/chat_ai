@@ -1,65 +1,57 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block content %}
 
-{% block content %}
+<main class="w-full">
+  <div class="grid grid-cols-12 gap-2">
+    <div class="col-span-12 bg-gray-50 sm:col-span-3">
+      <div class="flex flex-col space-y-1 sm:h-screen">
+        <form method="post" action="{% url 'chat:index' %}">
+          {% csrf_token %}
+          <button
+            type="submit"
+            class="bg-green-500 text-white py-2 px-4 rounded m-2"
+          >
+            Start a new conversation
+          </button>
+        </form>
 
-  <main class="w-full">
-    <div class="grid grid-cols-12 gap-2">
-      <div class="col-span-12 bg-gray-50 sm:col-span-3">
-        <div class="flex flex-col space-y-1 sm:h-screen">
-
-          <form method="post" action="{% url 'chat:index' %}">
-            {% csrf_token %}
-            <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded m-2">Start a new conversation
-            </button>
-          </form>
-
-          <ul class="flex flex-col py-4 space-y-2">
-            {% for chat in chats %}
-              <a class="text-white py-2 px-2 rounded mx-2 bg-blue-500"
-                 href="{% url 'chat:message-list' chat.pk %}">Chat: created on <time>{{ chat.created_at }}</time></a>
-            {% endfor %}
-          </ul>
-
-        </div>
+        <ul class="flex flex-col py-4 space-y-2">
+          {% for chat in chats %}
+          <a
+            class="text-white py-2 px-2 rounded mx-2 bg-blue-500"
+            href="{% url 'chat:message-list' chat.pk %}"
+            >Chat: created on <time>{{ chat.created_at }}</time></a
+          >
+          {% endfor %}
+        </ul>
       </div>
-      <div class="col-span-12 bg-gray-50 sm:col-span-9">
-        <div class="bg-gray-50 sm:h-screen">
-
-          <div class="flex flex-col h-full">
-
-            <!-- Message List -->
-            <div class="overflow-y-auto flex-1">
-              {% include 'message_list.html' with chat_pk=view.kwargs.chat_pk %}
-            </div>
-
-            <!-- Message Form -->
-            <div>
-              <turbo-frame
-                  id="message-create-frame"
-                  src="{% url 'chat:message-create' view.kwargs.chat_pk %}"
-                  data-turbo="true"
-              >
-                Loading...
-              </turbo-frame>
-            </div>
+    </div>
+    <div class="col-span-12 bg-gray-50 sm:col-span-9">
+      <div class="bg-gray-50 sm:h-screen">
+        <div class="flex flex-col h-full">
+          <!-- Message List -->
+          <div class="overflow-y-auto flex-1">
+            {% include 'message_list.html' with chat_pk=view.kwargs.chat_pk %}
           </div>
 
+          <!-- Message Form -->
+          <div>
+            <turbo-frame
+              id="message-create-frame"
+              src="{% url 'chat:message-create' view.kwargs.chat_pk %}"
+              data-turbo="true"
+            >
+              Loading...
+            </turbo-frame>
+          </div>
         </div>
       </div>
     </div>
-  </main>
+  </div>
+</main>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const url = "/ws/turbo_stream/chat_{{ view.kwargs.chat_pk }}/"
-      const source = new WebSocket(
-        (location.protocol === "https:" ? "wss" : "ws") +
-        "://" +
-        window.location.host +
-        url
-      );
-      Turbo.connectStreamSource(source);
-    });
-</script>
+<div
+  data-controller="websocket"
+  data-url="/ws/turbo_stream/chat_{{ view.kwargs.chat_pk }}/"
+></div>
 
 {% endblock %}
