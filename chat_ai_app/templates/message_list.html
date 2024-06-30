@@ -1,5 +1,5 @@
 <div id="chat-{{ chat_pk }}-message-list">
   {% for instance in object_list %}
-  {% include "message_item.html" with
-  instance=instance %} {% endfor %}
+    {% include "message_item.html" with instance=instance %}
+  {% endfor %}
 </div>
