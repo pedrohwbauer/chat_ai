@@ -154,6 +154,9 @@ CHANNEL_LAYERS = {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
             "hosts": ["redis://127.0.0.1:6379/0"],
+            # https://github.com/django/channels_redis/issues/181
+            # To make openai demo work without warnings
+            "capacity": 1500,  # default 100
         },
     },
 }

@@ -11,37 +11,6 @@ from .forms import MessageForm
 
 from turbo_response import TurboStream, TurboStreamResponse
 
-from openai import OpenAI
-client = OpenAI(
-  api_key=settings.OPENAI_KEY,
-)
-
-
-def get_ai_response(message_pk):
-    chat_instance = Message.objects.get(pk=message_pk).chat
-    message_instance = Message.objects.create(
-        role=Message.ASSISTANT,
-        content="",
-        chat=chat_instance,
-    )
-    messages = Message.for_openai(chat_instance.messages.all())
-
-    try:
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=messages,
-            temperature=0,
-        )
-        message_instance.content = response.choices[0].message.content
-        message_instance.save(update_fields=["content"])
-    except Exception as e:
-        message_instance.content = str(e)
-        message_instance.save(update_fields=["content"])
-
-    # return AI message
-    return message_instance
-
-
 class IndexView(View):
 
     def get(self, request):
@@ -106,41 +75,6 @@ class MessageCreateView(CreateView):
     def form_valid(self, form):
         super().form_valid(form)
         request = self.request
-
-        from asgiref.sync import async_to_sync
-        from channels.layers import get_channel_layer
-
-        channel_layer = get_channel_layer()
-        group_name = f"turbo_stream.chat_{self.kwargs['chat_pk']}"
-        html = (
-            # user message
-            TurboStream(f"chat-{self.kwargs['chat_pk']}-message-list")
-                .append.template(
-                "message_item.html",
-                {
-                    "instance": self.object,
-                },
-            ).render()
-        )
-        async_to_sync(channel_layer.group_send)(
-            group_name, {"type": "html_message", "html": html}
-        )
-
-        ai_message = get_ai_response(self.object.pk)
-
-        html = (
-            # AI message
-            TurboStream(f"chat-{self.kwargs['chat_pk']}-message-list")
-                .append.template(
-                "message_item.html",
-                {
-                    "instance": ai_message,
-                },
-            ).render()
-        )
-        async_to_sync(channel_layer.group_send)(
-            group_name, {"type": "html_message", "html": html}
-        )
 
         # return Turbo Stream to do partial updates on the page
         return TurboStreamResponse(
