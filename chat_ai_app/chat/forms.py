@@ -12,6 +12,7 @@ class MessageForm(forms.ModelForm):
                 'class': "rounded-lg border-gray-300 block leading-normal border px-4 text-gray-700 bg-white "
                          "focus:outline-none py-2 appearance-none w-full",
                 'data-controller': "textarea-autogrow",
+                'data-textarea-autogrow-max-height-value':"400"
             },
         ),
         validators=[MinLengthValidator(2)]
