@@ -16,14 +16,16 @@ export default class extends Controller {
 
   autoSubmit(e) {
     if (!(e.key === "Enter" && (e.metaKey || e.ctrlKey))) return;
+
     const form = e.target.form;
     if (form) form.requestSubmit();
   }
 
-  scroll(event) {
-    if (event.target.tagName === "TEXTAREA") {
-      const target = document.querySelector(`#${this.targetValue}`);
+  scroll(e) {
+    if (e.target.tagName !== "TEXTAREA") return;
+
+    const target = document.querySelector(`#${this.targetValue}`);
+    if (target)
       target.parentElement.scrollTop = target.parentElement.scrollHeight;
-    }
   }
 }

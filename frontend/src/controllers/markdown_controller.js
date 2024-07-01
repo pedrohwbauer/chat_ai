@@ -12,8 +12,11 @@ export default class extends Controller {
     this.parse();
 
     if (this.element.dataset.turboStream === "true") {
-      // if message come from turbo stream, auto scroll to bottom to display it
-      this.scroll();
+      // if message come from turbo stream, auto scroll smooth to bottom to display it
+      this.scroll("smooth");
+    } else {
+      // Wait for turbo to load frame, it affects height
+      document.addEventListener("turbo:frame-load", () => this.scroll());
     }
   }
 
@@ -30,14 +33,13 @@ export default class extends Controller {
 
       return `<pre><code class="hljs ${validLanguage}">${highlightedCode}</code></pre>`;
     };
-    console.log(this.element.dataset.content);
+
     const html = marked.parse(this.element.dataset.content, { renderer });
     this.element.innerHTML = html;
   }
 
-  scroll() {
-    const target = document.querySelector(`#${this.targetValue}`);
-    console.log(target.parentElement.scrollHeight);
-    target.parentElement.scrollTop = target.parentElement.scrollHeight;
+  scroll(behavior = "auto") {
+    const parent = document.querySelector(`#${this.targetValue}`).parentElement;
+    parent.scrollBy({ top: parent.scrollHeight, behavior: behavior });
   }
 }
