@@ -11,13 +11,19 @@ export default class extends Controller {
   connect() {
     this.parse();
 
+    this.turboFrameLoadListener = () => this.scroll();
+
     if (this.element.dataset.turboStream === "true") {
       // if message come from turbo stream, auto scroll smooth to bottom to display it
       this.scroll("smooth");
     } else {
       // Wait for turbo to load frame, it affects height
-      document.addEventListener("turbo:frame-load", () => this.scroll());
+      document.addEventListener("turbo:frame-load", this.turboFrameLoadListener);
     }
+  }
+
+  disconnect() {
+    document.removeEventListener("turbo:frame-load", this.turboFrameLoadListener);
   }
 
   parse() {
