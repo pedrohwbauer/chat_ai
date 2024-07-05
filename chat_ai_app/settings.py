@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'channels',
     
     'chat_ai_app.chat',
+    'chat_ai_app.users',
 ]
 
 MIDDLEWARE = [
@@ -72,7 +73,10 @@ ROOT_URLCONF = 'chat_ai_app.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['chat_ai_app/templates'],
+        'DIRS': [
+            'chat_ai_app/templates',
+            'chat_ai_app/users/templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
