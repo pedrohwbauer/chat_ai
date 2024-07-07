@@ -6,12 +6,14 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView
 from django.http import HttpResponseRedirect
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from .models import Chat, Message
 from .forms import MessageForm
 
 from turbo_response import TurboStream, TurboStreamResponse
 
-class IndexView(View):
+class IndexView(LoginRequiredMixin, View):
 
     def get(self, request):
         # If no chat exists, create a new chat and redirect to the message list page.
@@ -29,7 +31,7 @@ class IndexView(View):
 index_view = IndexView.as_view()
 
 
-class MessageListView(ListView):
+class MessageListView(LoginRequiredMixin, ListView):
     model = Message
     template_name = "message_list_page.html"
 
@@ -47,7 +49,7 @@ class MessageListView(ListView):
 message_list_view = MessageListView.as_view()
 
 
-class MessageCreateView(CreateView):
+class MessageCreateView(LoginRequiredMixin, CreateView):
     model = Message
     template_name = "message_create.html"
     form_class = MessageForm
