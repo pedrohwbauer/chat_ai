@@ -33,6 +33,8 @@ DEBUG = os.environ['DJANGO_DEBUG']
 
 OPENAI_KEY = os.environ['OPENAI_KEY']
 
+DEFAULT_SUPERUSER_ID = os.environ['DJANGO_DEFAULT_SUPERUSER_ID']
+
 ALLOWED_HOSTS = []
 
 
@@ -123,6 +125,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LOGIN_URL = '/users/login/'
+LOGIN_REDIRECT_URL = '/chat/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

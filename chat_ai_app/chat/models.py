@@ -1,7 +1,10 @@
 from django.db import models
+from django.conf import settings
+from django.contrib.auth.models import User
 
 
 class Chat(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chats', default=settings.DEFAULT_SUPERUSER_ID)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -18,6 +21,7 @@ class Message(models.Model):
         (USER, "User"),
     )
 
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='messages', default=settings.DEFAULT_SUPERUSER_ID)
     role = models.IntegerField(choices=ROLE_CHOICES)
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name="messages")
     content = models.TextField()

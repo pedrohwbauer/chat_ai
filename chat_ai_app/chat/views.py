@@ -17,14 +17,14 @@ class IndexView(LoginRequiredMixin, View):
 
     def get(self, request):
         # If no chat exists, create a new chat and redirect to the message list page.
-        chat = Chat.objects.first()
+        chat = Chat.objects.filter(user=request.user).first()
         if not chat:
-            chat = Chat.objects.create()
+            chat = Chat.objects.create(user=request.user)
         return HttpResponseRedirect(reverse("chat:message-list", args=[chat.pk]))
 
     def post(self, request, *args, **kwargs):
         # create new chat object and redirect to message list view
-        instance = Chat.objects.create()
+        instance = Chat.objects.create(user=request.user)
         return HttpResponseRedirect(reverse("chat:message-list", args=[instance.pk]))
 
 
@@ -37,12 +37,12 @@ class MessageListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = qs.filter(chat_id=self.kwargs["chat_pk"])
+        qs = qs.filter(chat_id=self.kwargs["chat_pk"], chat__user=self.request.user)
         return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["chats"] = Chat.objects.all()
+        context["chats"] = Chat.objects.filter(user=self.request.user)
         return context
 
 
@@ -61,6 +61,7 @@ class MessageCreateView(LoginRequiredMixin, CreateView):
         kwargs = super().get_form_kwargs()
         kwargs["chat_pk"] = self.kwargs.get("chat_pk")
         kwargs["role"] = Message.USER
+        kwargs["user"] = self.request.user
         return kwargs
 
     def get_empty_form(self):

@@ -25,6 +25,7 @@ class MessageForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.role = kwargs.pop("role")
         self.chat_pk = kwargs.pop("chat_pk")
+        self.user = kwargs.pop("user")
 
         super().__init__(*args, **kwargs)
 
@@ -32,6 +33,7 @@ class MessageForm(forms.ModelForm):
         instance = super().save(commit=False)
         instance.chat_id = self.chat_pk
         instance.role = self.role
+        instance.user = self.user
         if commit:
             instance.save()
         return instance
