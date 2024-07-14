@@ -19,7 +19,7 @@
           <a
             class="text-white py-2 px-2 rounded mx-2 bg-blue-500"
             href="{% url 'chat:message-list' chat.pk %}"
-            >Chat: created on <time>{{ chat.created_at }}</time></a
+            >Chat: {{chat.last_message_content}} <time>{{ chat.created_at }}</time></a
           >
           {% endfor %}
         </ul>

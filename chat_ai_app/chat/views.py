@@ -1,5 +1,7 @@
 from django.conf import settings
 
+from django.db.models import Subquery, OuterRef
+
 from django.urls import reverse
 from django.views import View
 from django.views.generic.list import ListView
@@ -42,7 +44,16 @@ class MessageListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["chats"] = Chat.objects.filter(user=self.request.user)
+        # Define the subquery
+        last_messages = Message.objects.filter(chat=OuterRef('pk')).order_by('-created_at')
+
+        # Annotate the chats with the last message content
+        chats = Chat.objects.filter(user=self.request.user).annotate(
+            last_message_content=Subquery(last_messages.values('content')[:1])
+        )
+        
+        context['chats'] = chats
+
         return context
 
 
