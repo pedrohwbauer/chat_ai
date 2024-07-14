@@ -75,10 +75,7 @@ ROOT_URLCONF = 'chat_ai_app.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            'chat_ai_app/templates',
-            'chat_ai_app/users/templates',
-        ],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
