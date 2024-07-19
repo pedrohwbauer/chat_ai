@@ -5,7 +5,7 @@ from django.db.transaction import on_commit
 from django.dispatch import receiver
 from turbo_response import TurboStream
 
-from chat_ai_app.chat.tasks import task_ai_chat
+from chat_ai_app.chat.tasks import task_chat_gpt, task_chat_llm
 
 from .models import Message
 
@@ -36,4 +36,7 @@ def handle_user_message(sender, instance, created, **kwargs):
         )
 
         # call openai chat task in Celery worker
-        on_commit(lambda: task_ai_chat.delay(message_instance.pk))
+        # on_commit(lambda: task_chat_gpt.delay(message_instance.pk))
+        
+        on_commit(lambda: task_chat_llm.delay(message_instance.pk))
+        

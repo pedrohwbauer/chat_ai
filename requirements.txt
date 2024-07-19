@@ -9,3 +9,5 @@ channels-redis==4.1.0
 openai
 celery==5.4.0
 watchfiles
+transformers
+torch
